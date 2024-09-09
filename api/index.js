@@ -1,20 +1,19 @@
-const path = require('path');
-const { createServer } = require('http');
+const { Server } = require('socket.io');
 
-const express = require('express');
-const { getIO, initIO } = require('./socket');
+module.exports = (req, res) => {
+  const server = require('http').createServer();
+  const io = new Server(server);
 
-const app = express();
+  io.on('connection', (socket) => {
+    console.log('New WebSocket connection');
+    socket.on('disconnect', () => {
+      console.log('WebSocket disconnected');
+    });
+  });
 
-app.use('/', express.static(path.join(__dirname, 'public')));
+  server.listen(3500, () => {
+    console.log('Server running on port 3500');
+  });
 
-const httpServer = createServer(app);
-
-let port = process.env.PORT || 3500;
-
-initIO(httpServer);
-
-httpServer.listen(port)
-console.log("Server started on ", port);
-
-getIO();
+  res.status(200).send('WebSocket server running!');
+};
