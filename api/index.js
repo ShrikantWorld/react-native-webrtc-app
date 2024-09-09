@@ -6,7 +6,7 @@ const { getIO, initIO } = require('./socket');
 
 const app = express();
 
-app.use('/', express.static(path.join(__dirname, 'static')));
+app.use('/', express.static(path.join(__dirname, 'public')));
 
 const httpServer = createServer(app);
 
