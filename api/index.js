@@ -7,8 +7,7 @@ const app = express();
 const server = createServer(app);
 
 // Serve static files from 'public' directory
-app.get('/', express.static(path.join(__dirname, '../public')));
-
+app.use('/', express.static(path.join(__dirname, '../public')));
 
 // Initialize WebSocket
 initIO(server);
