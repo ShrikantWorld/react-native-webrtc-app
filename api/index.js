@@ -7,22 +7,22 @@ const app = express();
 const server = createServer(app);
 
 // Serve static files from 'public' directory
-//app.use('/', express.static(path.join(__dirname, '../public')));
-app.get('/', (req, res) => {
-    res.send('Signaling server is running.');
-});
+app.get('/', express.static(path.join(__dirname, '../public')));
+// app.get('/', (req, res) => {
+//     res.send('Signaling server is running.');
+//   });
 
 // Initialize WebSocket
 initIO(server);
 
 app.get('/', (req, res) => {
-    res.send('Signaling server is running.');
+  res.send('Signaling server is running.');
 });
 
 module.exports = (req, res) => {
-    // Vercel serverless function handler
-    server.listen(process.env.PORT || 3500, () => {
-        console.log('Server started');
-    });
-    app(req, res);
+  // Vercel serverless function handler
+  server.listen(process.env.PORT || 3500, () => {
+    console.log('Server started');
+  });
+  app(req, res);
 };
