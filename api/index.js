@@ -1,20 +1,25 @@
 const path = require('path');
 const { createServer } = require('http');
-
 const express = require('express');
-const { getIO, initIO } = require('./socket');
+const { initIO } = require('./socket');
 
 const app = express();
+const server = createServer(app);
 
-app.use('/', express.static(path.join(__dirname, 'public')));
+// Serve static files from 'public' directory
+app.use('/', express.static(path.join(__dirname, '../public')));
 
-const httpServer = createServer(app);
+// Initialize WebSocket
+initIO(server);
 
-let port = process.env.PORT || 3500;
+app.get('/', (req, res) => {
+  res.send('Signaling server is running.');
+});
 
-initIO(httpServer);
-
-httpServer.listen(port)
-console.log("Server started on ", port);
-
-getIO();
+module.exports = (req, res) => {
+  // Vercel serverless function handler
+  server.listen(process.env.PORT || 3500, () => {
+    console.log('Server started');
+  });
+  app(req, res);
+};
