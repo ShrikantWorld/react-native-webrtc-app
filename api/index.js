@@ -8,9 +8,7 @@ const server = createServer(app);
 
 // Serve static files from 'public' directory
 app.get('/', express.static(path.join(__dirname, '../public')));
-// app.get('/', (req, res) => {
-//     res.send('Signaling server is running.');
-//   });
+
 
 // Initialize WebSocket
 initIO(server);
