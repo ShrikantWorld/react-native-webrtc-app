@@ -1,43 +1,20 @@
+const path = require('path');
+const { createServer } = require('http');
+
 const express = require('express');
-const http = require('http');
-const socketIO = require('socket.io');
+const { getIO, initIO } = require('./socket');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
 
-let connectedUsers = {};
+app.use('/', express.static(path.join(__dirname, 'static')));
 
-// Serve a simple message at the root path
-app.get('/', (req, res) => {
-  res.send('Signaling server is running.');
-});
+const httpServer = createServer(app);
 
-io.on('connection', (socket) => {
-  connectedUsers[socket.id] = socket;
+let port = process.env.PORT || 3500;
 
-  io.emit('updateUserList', Object.keys(connectedUsers));
+initIO(httpServer);
 
-  socket.on('startCall', (data) => {
-    const { to } = data;
-    if (connectedUsers[to]) {
-      connectedUsers[to].emit('callIncoming', socket.id);
-    }
-  });
+httpServer.listen(port)
+console.log("Server started on ", port);
 
-  socket.on('signal', (data) => {
-    const { to, ...signalData } = data;
-    if (connectedUsers[to]) {
-      connectedUsers[to].emit('signal', { from: socket.id, ...signalData });
-    }
-  });
-
-  socket.on('disconnect', () => {
-    delete connectedUsers[socket.id];
-    io.emit('updateUserList', Object.keys(connectedUsers));
-  });
-});
-
-server.listen(3000, () => {
-  console.log('Signaling server is running on port 3000');
-});
+getIO();
